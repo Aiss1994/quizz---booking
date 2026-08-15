@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Booking, Stickage & Destickage · Branded Cars France</title>
+<style>
+  :root{--g:#2A9C64;--glt:#DEF0E5;--gdk:#1A6B3C;--bl:#2563A8;--blt:#D6E4F7;--rd:#C0392B;--rlt:#FADBD8;--yw:#B7950B;--ylt:#FEF9E7;--pu:#6C3483;--plt:#E8DAEF;--og:#E8732A;--ogl:#FDF0E6;--dk:#06160E;--gy:#6B7280;--gylt:#F5F7FA;--br:#CBD5E1;--wh:#fff;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#F0F4F1;color:var(--dk);padding-bottom:80px;}
+  .topbar{background:var(--dk);border-bottom:4px solid var(--g);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .topbar .brand{color:var(--g);font-size:18px;font-weight:700;}.topbar .sub{color:#7FB87A;font-size:11px;margin-top:2px;}
+  .pill{background:#1F2D1F;border:1px solid var(--g);border-radius:20px;padding:6px 14px;text-align:center;}
+  .pill .pn{color:var(--g);font-size:16px;font-weight:700;}.pill .ps{color:#7FB87A;font-size:10px;}
+  .pbar{height:5px;background:#1F2D1F;}.pbar-fill{height:5px;background:var(--g);transition:width .3s;width:0%;}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 14px 0;}
+  .intro{background:var(--wh);border:1px solid var(--br);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+  .intro-h{background:var(--dk);padding:26px 30px;}.intro-h h1{color:var(--wh);font-size:22px;font-weight:700;margin-bottom:5px;}.intro-h p{color:#7FB87A;font-size:13px;}
+  .intro-b{padding:20px 30px;}
+  .chips{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+  .chip{display:flex;align-items:center;gap:8px;background:var(--gylt);border-radius:8px;padding:9px 13px;font-size:13px;}
+  .chip strong{color:var(--dk);}.chip span{color:var(--gy);}
+  .mod-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .mod-tag{border-radius:6px;padding:5px 11px;font-size:11px;font-weight:600;border:1.5px solid;}
+  .sep{display:flex;align-items:center;gap:10px;margin:28px 0 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+  .sep-l{flex:1;height:2px;}
+  .card{background:var(--wh);border:1px solid var(--br);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .card-h{display:flex;align-items:center;gap:12px;padding:14px 18px 0;}
+  .qnum{min-width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--wh);flex-shrink:0;}
+  .qtag{font-size:10px;font-weight:600;border-radius:4px;padding:2px 8px;border:1.5px solid;text-transform:uppercase;letter-spacing:.04em;}
+  .qtext{padding:11px 18px 10px;font-size:14px;font-weight:600;line-height:1.5;}
+  .sit-bloc{margin:0 18px 14px;border-radius:9px;overflow:hidden;border:1.5px solid var(--yw);}
+  .sit-header{background:var(--dk);padding:8px 16px;}.sit-header span{color:var(--yw);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+  .sit-body{background:var(--ylt);padding:14px 16px;font-size:13px;color:var(--dk);line-height:1.6;}
+  .sit-body strong{color:var(--yw);}
+  .opts{padding:0 18px 10px;display:flex;flex-direction:column;gap:7px;}
+  .opt{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:7px;border:1.5px solid var(--br);cursor:pointer;transition:all .12s;font-size:13.5px;line-height:1.4;}
+  .opt:hover{border-color:var(--g);background:var(--glt);}
+  .opt input{margin-top:2px;accent-color:var(--g);flex-shrink:0;}
+  .opt.ok{border-color:var(--gdk);background:#CDEEE3;}.opt.ko{border-color:var(--rd);background:var(--rlt);}
+  .opt.missed{border-color:var(--g);background:var(--glt);opacity:.75;}.opt.off{cursor:default;pointer-events:none;}
+  .fb{margin:0 18px 14px;padding:12px 14px;border-radius:8px;font-size:12.5px;line-height:1.6;display:none;}
+  .fb.show{display:block;}.fb.ok{background:#CDEEE3;border:1px solid var(--gdk);color:var(--gdk);}.fb.ko{background:var(--rlt);border:1px solid var(--rd);color:var(--rd);}
+  .card-f{padding:0 18px 18px;}
+  .btn-val{background:var(--g);color:var(--wh);border:none;border-radius:7px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-val:hover{background:var(--gdk);}.btn-val:disabled{background:var(--br);color:var(--gy);cursor:default;}
+  #score{display:none;background:var(--wh);border:1px solid var(--br);border-radius:10px;overflow:hidden;margin-top:8px;}
+  .sc-h{background:var(--dk);padding:26px 30px;text-align:center;}.sc-h h2{color:var(--wh);font-size:20px;font-weight:700;margin-bottom:5px;}
+  .sc-num{font-size:54px;font-weight:700;margin:14px 0 2px;}.sc-lbl{font-size:14px;margin-bottom:14px;}
+  .sc-b{padding:22px 30px;}
+  .sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+  .sc-cell{border-radius:8px;padding:14px;text-align:center;border:1px solid var(--br);}
+  .sc-cell .n{font-size:28px;font-weight:700;}.sc-cell .l{font-size:11px;color:var(--gy);margin-top:2px;}
+  .banner{border-radius:8px;padding:14px 18px;font-size:13.5px;line-height:1.6;margin-bottom:20px;border:1px solid;}
+  .ms-scores{margin-bottom:22px;}.ms-scores h3{font-size:13px;font-weight:700;margin-bottom:10px;}
+  .ms-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .ms-label{font-size:11.5px;color:var(--gy);min-width:210px;}
+  .ms-bar{flex:1;background:var(--gylt);border-radius:4px;height:14px;overflow:hidden;}
+  .ms-fill{height:14px;border-radius:4px;transition:width .5s;}
+  .ms-num{font-size:11px;font-weight:700;min-width:36px;text-align:right;}
+  .idform{background:var(--gylt);border:1px solid var(--br);border-radius:9px;padding:20px 22px;margin-bottom:18px;}
+  .idform h3{font-size:14px;font-weight:700;margin-bottom:3px;}.idform p{font-size:12.5px;color:var(--gy);margin-bottom:14px;}
+  .frow{display:flex;gap:10px;flex-wrap:wrap;}
+  .fg{flex:1;min-width:160px;}.fg label{display:block;font-size:11px;font-weight:600;color:var(--gy);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+  .fg input{width:100%;padding:9px 11px;border:1.5px solid var(--br);border-radius:7px;font-size:13px;font-family:inherit;}
+  .fg input:focus{outline:none;border-color:var(--g);}
+  .btn-send{background:var(--g);color:var(--wh);border:none;border-radius:7px;padding:11px 0;font-size:13.5px;font-weight:600;cursor:pointer;width:100%;margin-top:13px;}
+  .btn-send:hover{background:var(--gdk);}.btn-send:disabled{background:var(--br);color:var(--gy);cursor:default;}
+  .sstatus{margin-top:10px;padding:11px 14px;border-radius:7px;font-size:13px;display:none;}
+  .sstatus.ok{background:#CDEEE3;border:1px solid var(--gdk);color:var(--gdk);display:block;}
+  .sstatus.ko{background:var(--rlt);border:1px solid var(--rd);color:var(--rd);display:block;}
+  .sstatus.loading{background:var(--ylt);border:1px solid var(--yw);color:#7A5A00;display:block;}
+  .btn-retry{background:var(--dk);color:var(--wh);border:none;border-radius:7px;padding:11px 26px;font-size:13px;font-weight:600;cursor:pointer;display:block;margin:0 auto;}
+  .btn-retry:hover{background:#1F2D1F;}
+  @media(max-width:600px){.topbar,.intro-b,.sc-b{padding-left:14px;padding-right:14px;}.sc-grid{grid-template-columns:1fr 1fr;}.frow{flex-direction:column;}.ms-label{min-width:140px;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div><div class="brand">Bolt · Branded Cars France</div><div class="sub">Quiz — Booking, Stickage &amp; Destickage · Août 2026</div></div>
+  <div class="pill"><div class="pn" id="pn">0/20</div><div class="ps">questions répondues</div></div>
+</div>
+<div class="pbar"><div class="pbar-fill" id="pb"></div></div>
+
+<div class="wrap">
+  <div class="intro">
+    <div class="intro-h">
+      <h1>Quiz — Booking, Stickage &amp; Destickage</h1>
+      <p>Channels Slack · Process Paris &amp; RoF · Format messages · Problèmes fréquents · Branded Cars France · Août 2026</p>
+    </div>
+    <div class="intro-b">
+      <div class="chips">
+        <div class="chip">📋 <div><strong>20 questions</strong><br><span>QCM + situations réelles</span></div></div>
+        <div class="chip">🎯 <div><strong>Objectif ≥ 80 %</strong><br><span>16 bonnes réponses min.</span></div></div>
+        <div class="chip">📤 <div><strong>Google Sheet dédié</strong><br><span>Résultats séparés</span></div></div>
+      </div>
+      <div class="mod-nav">
+        <span class="mod-tag" style="color:#1A6B3C;border-color:#2A9C64;background:#DEF0E5;">S1 — Channels Slack (5 Q)</span>
+        <span class="mod-tag" style="color:#2563A8;border-color:#2563A8;background:#D6E4F7;">S2 — Paris & LMDVTC (5 Q)</span>
+        <span class="mod-tag" style="color:#E8732A;border-color:#E8732A;background:#FDF0E6;">S3 — Rest of France (5 Q)</span>
+        <span class="mod-tag" style="color:#6C3483;border-color:#6C3483;background:#E8DAEF;">S4 — Process global & rappels (5 Q)</span>
+      </div>
+      <p style="font-size:12px;color:var(--gy);">Certaines questions présentent une situation concrète. Choisis la bonne démarche ou la bonne réponse à donner.</p>
+    </div>
+  </div>
+
+  <div id="qz"></div>
+
+  <div id="score">
+    <div class="sc-h"><h2>Résultat — Quiz Booking</h2><div class="sc-num" id="scn"></div><div class="sc-lbl" id="scl"></div></div>
+    <div class="sc-b">
+      <div class="sc-grid">
+        <div class="sc-cell" style="border-color:#2A9C64;background:#DEF0E5;"><div class="n" style="color:#1A6B3C;" id="sc-ok">—</div><div class="l">Bonnes réponses</div></div>
+        <div class="sc-cell" style="border-color:#C0392B;background:#FADBD8;"><div class="n" style="color:#C0392B;" id="sc-ko">—</div><div class="l">Erreurs</div></div>
+        <div class="sc-cell" style="border-color:#CBD5E1;background:#F5F7FA;"><div class="n" style="color:#6B7280;" id="sc-pt">—</div><div class="l">Score</div></div>
+      </div>
+      <div class="ms-scores"><h3>Score par section</h3><div id="ms-rows"></div></div>
+      <div class="banner" id="banner"></div>
+      <div class="idform">
+        <h3>📤 Envoyer mes résultats</h3>
+        <p>Renseigne ton prénom et nom pour enregistrer ton score.</p>
+        <div class="frow">
+          <div class="fg"><label>Prénom</label><input type="text" id="fp" placeholder="Marie" autocomplete="given-name"></div>
+          <div class="fg"><label>Nom</label><input type="text" id="fn" placeholder="Dupont" autocomplete="family-name"></div>
+        </div>
+        <button class="btn-send" id="bs" onclick="send()">Envoyer mes résultats →</button>
+        <div class="sstatus" id="ss"></div>
+      </div>
+      <button class="btn-retry" onclick="restart()">🔄 Recommencer le quiz</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const URL_GAS='https://script.google.com/macros/s/AKfycbxmQtIGFXmPfw6H-6bGP9zJtzMOwryk7r9kjmZQT7Ain_o2rq8WOWTD7bgjdwOKKJW2yQ/exec';
+
+const SECS=[
+  {id:'S1',name:'Channels Slack',color:'#2A9C64',bg:'#DEF0E5',dark:'#1A6B3C',count:5},
+  {id:'S2',name:'Paris & LMDVTC',color:'#2563A8',bg:'#D6E4F7',dark:'#1A4A8C',count:5},
+  {id:'S3',name:'Rest of France',color:'#E8732A',bg:'#FDF0E6',dark:'#A84F1A',count:5},
+  {id:'S4',name:'Process global & rappels',color:'#6C3483',bg:'#E8DAEF',dark:'#4A1A6B',count:5},
+];
+
+function sit(text){
+  return `<div class="sit-bloc"><div class="sit-header"><span>📋 Situation</span></div><div class="sit-body">${text}</div></div>`;
+}
+
+const QS=[
+// ══ S1 — Channels Slack ══
+{s:0,
+ q:"Un chauffeur à Paris souhaite prendre un RDV pour faire poser ses autocollants. Quel channel Slack utiliser ?",
+ o:["#fr_brandedcars_rof","#fr-support-branded-car","#lmdvtc-bolt-branded-cars en taguant @Yanis","#ext-majorel-bolt-ops-fr-brandedcars"],
+ c:2,e:"#lmdvtc-bolt-branded-cars est le channel dédié à toutes les demandes Paris : pose, remplacement, dépose, mise à jour info, problème technique. @Yanis doit être tagué dans chaque message."},
+
+{s:0,
+ q:"Un chauffeur à Lyon signale que son autocollant s'est décollé et veut un remplacement. Quel channel utiliser ?",
+ o:["#lmdvtc-bolt-branded-cars","#fr_brandedcars_rof","#fr-support-branded-car","Contacter directement Agendize"],
+ c:1,e:"#fr_brandedcars_rof est le channel dédié au Rest of France pour le stickage, destickage, problèmes et nouveaux leads. Lyon est une ville RoF — on ne passe pas par LMDVTC."},
+
+{s:0,
+ q:"Un chauffeur conteste un paiement qui n'a pas été résolu depuis 3 semaines malgré plusieurs échanges. Comment l'agent Branded Cars doit-il escalader ?",
+ o:["Poster dans #fr-support-branded-car","Envoyer un email à partenaires@bolt.eu","Escalader via le channel privé dédié Cognizant & Branded Cars","Clôturer le ticket Beehive et demander au chauffeur de rappeler"],
+ c:2,e:"Le channel #fr-support-branded-car est réservé aux équipes des autres streams pour remonter des informations au stream Branded Cars. Les agents Branded Cars eux escaladent leurs demandes internes sur le channel privé dédié Cognizant & Branded Cars, utilisé pour la gestion du quotidien."},
+
+{s:0,
+ q:"Un agent hésite entre deux channels pour une situation. Que doit-il faire en cas de doute ?",
+ o:["Envoyer le message dans les deux channels pour être sûr","Escalader via le channel privé dédié Cognizant & Branded Cars pour validation","Clôturer le ticket et demander au chauffeur de rappeler","Poster dans #fr-support-branded-car par défaut"],
+ c:1,e:"En cas de doute sur le channel à utiliser, la règle est d'escalader via le channel privé dédié Cognizant & Branded Cars. Ne jamais envoyer dans plusieurs channels simultanément. Rappel : #fr-support-branded-car est réservé aux autres streams pour nous remonter des informations — pas pour les escalades internes des agents Branded Cars."},
+
+{s:0,
+ q:"Parmi ces affirmations, laquelle est VRAIE concernant les channels Slack Branded Cars ?",
+ o:["#lmdvtc-bolt-branded-cars gère aussi les demandes RoF quand Agendize est indisponible","#fr_brandedcars_rof inclut les nouveaux leads, le paiement RoF, la vérif photo et le destickage complexe","#fr-support-branded-car est le channel d'escalade interne des agents Branded Cars","Un problème bloquant non résolu en 48h peut être ignoré si le chauffeur ne relance pas"],
+ c:1,e:"#fr_brandedcars_rof gère : nouveaux leads, paiement RoF, vérification photo, destickage complexe. Important : #fr-support-branded-car est utilisé par les équipes des AUTRES streams pour remonter des informations au stream Branded Cars — ce n'est pas un channel d'escalade pour les agents Branded Cars. Les agents Branded Cars escaladent via leur channel privé dédié Cognizant & Branded Cars."},
+
+// ══ S2 — Paris & LMDVTC ══
+{s:1,
+ q:"Un agent doit contacter LMDVTC pour une prise de RDV de pose. Quels champs sont obligatoires dans chaque message ?",
+ o:["Uniquement l'immatriculation et la date souhaitée","Immatriculation · Nom du chauffeur · Numéro de téléphone · Adresse e-mail · Nature de la demande","Driver ID · Plaque · Ville · Date souhaitée · Type de demande","Nom · Prénom · Date de naissance · Plaque · Disponibilités"],
+ c:1,e:"Les 5 champs obligatoires dans tout message #lmdvtc : Immatriculation · Nom du chauffeur · Numéro de téléphone · Adresse e-mail · Nature de la demande. Sans ces éléments, Yanis ne peut pas traiter la demande."},
+
+{s:1,
+ q:"Un chauffeur Paris veut un RDV de remplacement car son sticker est abîmé. Quelle est la bonne démarche ?",
+ o:["Envoyer directement le message à Yanis sans vérification préalable","Vérifier les photos du chauffeur d'abord, joindre les photos dans le message Slack, inclure immat + nom + tél + email, taguer @Yanis","Prendre le RDV via Agendize","Remonter dans #fr-support-branded-car"],
+ c:1,e:"Pour un RDV de remplacement : 1) vérifier les photos du chauffeur, 2) joindre les photos dans le message Slack, 3) inclure immat + nom + tél + email + photos jointes, 4) taguer @Yanis dans #lmdvtc-bolt-branded-cars."},
+
+{s:1,
+ q:"Le système Admin affiche 'en cours' pour un chauffeur Paris mais il n'a plus de sticker. Que faire ?",
+ extra:sit("Un chauffeur parisien vous contacte : <strong>«\u00a0J'ai enlevé mon sticker mais le système indique encore 'en cours'. Je ne peux pas reprendre un RDV de pose.\u00a0»</strong>"),
+ o:["Clôturer le ticket — le système se mettra à jour automatiquement","Demander à Yanis de déclarer le véhicule destické dans le système, puis reprendre un RDV de pose","Remonter dans #fr_brandedcars_rof","Demander au chauffeur de contacter directement Bolt par email"],
+ c:1,e:"Problème fréquent Paris : quand le système affiche 'en cours' sans sticker réel, il faut demander à Yanis de déclarer le véhicule comme destické. Seulement après cette déclaration, un nouveau RDV de pose peut être créé."},
+
+{s:1,
+ q:"Un chauffeur Paris a la mauvaise plaque d'immatriculation enregistrée dans le système. Que faire ?",
+ extra:sit("Un agent constate que la plaque enregistrée dans Admin est <strong>AB-123-CD</strong> alors que la plaque réelle du chauffeur est <strong>EF-456-GH</strong>."),
+ o:["Corriger la plaque directement dans Admin","Signaler à Yanis dans le channel : ancienne plaque → nouvelle plaque correcte","Clôturer le ticket et demander au chauffeur de re-remplir le formulaire d'inscription","Remonter dans #fr-support-branded-car car ce n'est pas du ressort de LMDVTC"],
+ c:1,e:"Plaque incorrecte à Paris → signaler à Yanis dans #lmdvtc-bolt-branded-cars avec l'ancienne plaque et la nouvelle plaque correcte. L'agent ne peut pas modifier Admin directement — Yanis fait la correction."},
+
+{s:1,
+ q:"Un chauffeur Paris est en retard pour son RDV de pose chez LMDVTC. Quelle est la bonne réaction ?",
+ o:["Attendre que Yanis contacte l'agent s'il y a un problème","Prévenir Yanis immédiatement dans le channel avec l'heure estimée d'arrivée du chauffeur","Annuler le RDV et en reprendre un nouveau","Dire au chauffeur qu'il perdra son RDV s'il n'arrive pas à l'heure"],
+ c:1,e:"Chauffeur en retard → prévenir Yanis immédiatement dans #lmdvtc-bolt-branded-cars avec l'heure estimée d'arrivée. Ne pas attendre — Yanis doit pouvoir gérer son planning. Ne jamais promettre que le RDV sera maintenu sans confirmation de Yanis."},
+
+// ══ S3 — Rest of France ══
+{s:2,
+ q:"Un chauffeur à Bordeaux veut poser son sticker. Quel outil utilise-t-on pour prendre le RDV ?",
+ o:["LMDVTC directement","Le channel #fr_brandedcars_rof uniquement — pas d'outil externe","Agendize (app.agendize.com)","Infobip pour contacter le partenaire local"],
+ c:2,e:"Pour le Rest of France, les RDV de stickage et destickage se prennent via Agendize (app.agendize.com). Les créneaux sont créés et gérés par l'équipe Bolt. Le délai minimum est de 72h avant le créneau souhaité."},
+
+{s:2,
+ q:"Un chauffeur RoF veut faire retirer son sticker mais aucun créneau n'est disponible chez les partenaires. Que peut-il faire ?",
+ o:["Attendre qu'un créneau se libère — pas d'autre option","Contacter LMDVTC à Paris pour un RDV de dépose","Faire retirer le sticker par ses propres moyens et envoyer sa facture (remboursement max 75 €)","Demander à l'équipe Bolt de le faire lors de sa prochaine inspection"],
+ c:2,e:"Si aucun créneau n'est disponible, le chauffeur peut faire retirer le sticker par ses propres moyens et envoyer sa facture pour remboursement (maximum 75 € sur présentation de facture, après au moins une Période de Publicité complète)."},
+
+{s:2,
+ q:"Parmi les villes suivantes, laquelle N'EST PAS couverte par le programme Branded Cars en RoF ?",
+ o:["Lyon","Bordeaux","Dijon","Montpellier"],
+ c:2,e:"Dijon n'est pas dans la liste des villes RoF couvertes. Les villes actuelles : Bordeaux, Nice, Lille, Lyon, Marseille, Montpellier, Nantes, Rennes, Strasbourg, Toulouse. Le périmètre peut évoluer — toujours vérifier auprès du Team Lead en cas de doute."},
+
+{s:2,
+ q:"Un chauffeur RoF n'a pas reçu sa notification de vérification photo mensuelle. Que faire ?",
+ extra:sit("Un chauffeur à Toulouse contacte le support : <strong>«\u00a0Je n'ai pas reçu la notification pour envoyer mes photos de vérification ce mois-ci.\u00a0»</strong>"),
+ o:["Lui dire d'attendre — la notification arrivera automatiquement","Escalader dans le channel privé Bolt - Cognizant avec le lien Admin du chauffeur","Demander au chauffeur de soumettre des photos par email à la place","Remonter dans #fr_brandedcars_rof en attendant une réponse automatique"],
+ c:1,e:"Notification photo non reçue → escalader dans le channel privé Bolt - Cognizant avec le lien Admin du chauffeur. L'équipe Bolt renvoie alors la notification manuellement. Ne jamais dire au chauffeur d'envoyer des photos par email — seule la soumission via l'app Bolt Driver est valide."},
+
+{s:2,
+ q:"Quelle est la principale différence opérationnelle entre Paris et le Rest of France pour le stickage ?",
+ o:["Paris utilise Agendize, RoF utilise LMDVTC","Paris a un lieu fixe (LMDVTC/Yanis) avec des créneaux le jeudi, RoF passe par des partenaires locaux via Agendize avec des délais variables","Paris et RoF fonctionnent exactement de la même façon","RoF est géré directement par les agents sans passer par un partenaire"],
+ c:1,e:"Différence clé : Paris = lieu fixe LMDVTC à Gennevilliers, interlocuteur Yanis, créneaux principalement le jeudi. RoF = partenaires locaux variables selon la ville, RDV via Agendize, délais variables selon les disponibilités du partenaire."},
+
+// ══ S4 — Process global & rappels ══
+{s:3,
+ q:"Quelle est la première étape du process global pour traiter une demande de booking ?",
+ o:["Vérifier dans Admin le statut du véhicule","Identifier si le chauffeur est à Paris ou en Rest of France","Prendre le RDV directement sur la plateforme","Contacter Yanis dans le channel Slack"],
+ c:1,e:"Étape 1 : identifier la ville (Paris ou RoF ?). C'est cette information qui détermine tout le reste : le bon channel, le bon outil (LMDVTC ou Agendize), et le bon interlocuteur. Sans cette identification, on risque de prendre le mauvais process."},
+
+{s:3,
+ q:"Avant une prise de RDV de dépose (destickage), quelle vérification est obligatoire dans Admin ?",
+ o:["Vérifier que le Car ID existe dans Admin","Vérifier que le statut du sticker + les photos sont récupérées","Vérifier que le véhicule est bien marqué comme stické dans Admin","Vérifier que la photo de vérification du mois est validée"],
+ c:2,e:"Vérifications Admin obligatoires selon le type de RDV : Pose = Car ID existant. Remplacement = statut du sticker + photos récupérées. Dépose = véhicule marqué comme stické dans Admin. Mise à jour = photos véhicule + selfie carte VTC + pièce d'identité."},
+
+{s:3,
+ q:"Un agent vient de confirmer un RDV avec Yanis. Que doit-il faire ensuite ?",
+ extra:sit("Yanis confirme dans le channel que le RDV du chauffeur est bien pris pour le <strong>jeudi 22 août à 10h</strong>."),
+ o:["Clôturer le ticket Beehive immédiatement sans contacter le chauffeur","Informer le chauffeur de la date et heure confirmées par Yanis — ne jamais promettre une date avant confirmation","Promettre au chauffeur une date approximative en attendant la confirmation de Yanis","Demander à Yanis un email de confirmation avant d'informer le chauffeur"],
+ c:1,e:"Étape 4 du process : confirmer au chauffeur uniquement après confirmation de Yanis (ou du partenaire RoF). Ici Yanis a confirmé → on peut informer le chauffeur. Ne jamais promettre une date AVANT la confirmation — c'est la règle absolue."},
+
+{s:3,
+ q:"Quel est le délai minimum à respecter pour prendre un RDV via Agendize en RoF ?",
+ o:["24 heures avant le créneau","48 heures avant le créneau","72 heures avant le créneau","1 semaine avant le créneau"],
+ c:2,e:"Le délai minimum pour un RDV Agendize en Rest of France est de 72 heures avant le créneau souhaité. En dessous de ce délai, il n'est généralement pas possible de prendre un créneau disponible. Toujours informer le chauffeur de ce délai dès le début."},
+
+{s:3,
+ q:"Parmi les 4 réflexes essentiels du process booking, lequel est incorrect ?",
+ o:["Paris ou RoF ? Identifier la ville avant toute action → bon channel, bon process","Vérifier Admin : statut véhicule, Car ID, tag branding — toujours avant de répondre","Format standard : Immat + Nom + Tél + Email + Demande dans chaque message Slack","Promettre une date au chauffeur pour le rassurer, même sans confirmation du partenaire"],
+ c:3,e:"Le 4e réflexe correct est : jamais de promesse de date ou de compensation sans confirmation de Yanis ou du partenaire. Promettre une date sans confirmation est une faute — si le créneau n'est pas disponible, le chauffeur sera déçu et la confiance sera entamée."},
+];
+
+const score_sec=[0,0,0,0];
+const count_sec=[0,0,0,0];
+let answered=0,score=0,detail=[];
+
+function build(){
+  const z=document.getElementById('qz');z.innerHTML='';
+  answered=0;score=0;detail=[];
+  score_sec.fill(0);count_sec.fill(0);upd();
+  let lastS=-1;
+  QS.forEach((q,i)=>{
+    const sc=SECS[q.s];
+    if(q.s!==lastS){
+      const sep=document.createElement('div');sep.className='sep';
+      sep.innerHTML=`<div class="sep-l" style="background:${sc.color};height:2px;"></div>
+        <span style="color:${sc.dark};background:${sc.bg};border:2px solid ${sc.color};border-radius:7px;padding:5px 14px;white-space:nowrap;font-size:12px;">${sc.id} — ${sc.name} (${sc.count} Q)</span>
+        <div class="sep-l" style="background:${sc.color};height:2px;"></div>`;
+      z.appendChild(sep);lastS=q.s;
+    }
+    const numInSec=QS.slice(0,i).filter(x=>x.s===q.s).length+1;
+    const card=document.createElement('div');card.className='card';card.id=`q${i}`;
+    const extraHtml=q.extra||'';
+    card.innerHTML=`
+      <div class="card-h">
+        <div class="qnum" style="background:${sc.color};">${i+1}</div>
+        <span class="qtag" style="color:${sc.dark};background:${sc.bg};border-color:${sc.color};">${sc.id} · Q${numInSec}/${sc.count}</span>
+      </div>
+      <div class="qtext">${q.q}</div>
+      ${extraHtml}
+      <div class="opts">${q.o.map((o,j)=>`<label class="opt" id="o${i}_${j}"><input type="radio" name="q${i}" value="${j}" onchange="pick(${i})"><span>${o}</span></label>`).join('')}</div>
+      <div class="fb" id="fb${i}"></div>
+      <div class="card-f"><button class="btn-val" id="bv${i}" onclick="val(${i})" disabled>Valider</button></div>`;
+    z.appendChild(card);
+  });
+}
+
+function pick(i){document.getElementById(`bv${i}`).disabled=false;}
+
+function val(i){
+  const q=QS[i];let sel=-1;
+  document.querySelectorAll(`input[name="q${i}"]`).forEach(r=>{if(r.checked)sel=+r.value;});
+  if(sel<0)return;
+  const ok=sel===q.c;
+  if(ok){score++;score_sec[q.s]++;}
+  answered++;count_sec[q.s]++;
+  detail[i]={ok};
+  q.o.forEach((_,j)=>{
+    const el=document.getElementById(`o${i}_${j}`);el.classList.add('off');
+    if(j===q.c){el.classList.add(sel===j?'ok':'missed');if(sel!==j){const sp=document.createElement('span');sp.textContent='✅ ';el.insertBefore(sp,el.firstChild);}}
+    else if(j===sel){el.classList.add('ko');const sp=document.createElement('span');sp.textContent='❌ ';el.insertBefore(sp,el.firstChild);}
+  });
+  const fb=document.getElementById(`fb${i}`);
+  fb.className=`fb show ${ok?'ok':'ko'}`;
+  fb.innerHTML=`<strong>${ok?'✅ Bonne réponse !':'❌ Mauvaise réponse.'}</strong> ${q.e}`;
+  const b=document.getElementById(`bv${i}`);b.disabled=true;
+  b.textContent=ok?'✅ Validé':'❌ Validé';
+  b.style.background=ok?'#1A6B3C':'#C0392B';
+  upd();
+  if(answered===QS.length)setTimeout(showScore,600);
+}
+
+function upd(){
+  const p=Math.round(answered/QS.length*100);
+  document.getElementById('pn').textContent=`${answered}/${QS.length}`;
+  document.getElementById('pb').style.width=p+'%';
+}
+
+function showScore(){
+  const t=QS.length,p=Math.round(score/t*100),pass=p>=80;
+  document.getElementById('sc-ok').textContent=score;
+  document.getElementById('sc-ko').textContent=t-score;
+  document.getElementById('sc-pt').textContent=p+'%';
+  const sn=document.getElementById('scn');sn.textContent=`${score} / ${t}`;sn.style.color=pass?'#2A9C64':'#C0392B';
+  const sl=document.getElementById('scl');sl.style.color=pass?'#7FB87A':'#F5A89A';
+  const bn=document.getElementById('banner');
+  if(p>=90){sl.textContent='Excellente maîtrise 🎉';bn.style.cssText='background:#DEF0E5;border-color:#2A9C64;color:#1A6B3C;';bn.innerHTML='<strong>Félicitations !</strong> Tu maîtrises parfaitement le process booking, les channels Slack et les spécificités Paris/RoF.';}
+  else if(p>=80){sl.textContent='Quiz réussi ✅';bn.style.cssText='background:#DEF0E5;border-color:#2A9C64;color:#1A6B3C;';bn.innerHTML='<strong>Quiz réussi !</strong> Tu atteins le seuil de 80 %. Relis les questions manquées pour consolider ta connaissance du process.';}
+  else if(p>=60){sl.textContent='Insuffisant — à retravailler';bn.style.cssText='background:#FEF9E7;border-color:#B7950B;color:#7A5A00;';bn.innerHTML='<strong>Score insuffisant.</strong> Relis les slides Booking Stickage Destickage, notamment les channels Slack, les 4 types de RDV Paris et le process global.';}
+  else{sl.textContent='Score trop faible';bn.style.cssText='background:#FADBD8;border-color:#C0392B;color:#7B241C;';bn.innerHTML='<strong>Score insuffisant.</strong> Reprends les slides de formation depuis le début avant de recommencer ce quiz.';}
+  const rows=document.getElementById('ms-rows');rows.innerHTML='';
+  SECS.forEach((sc,i)=>{
+    const pct=Math.round(score_sec[i]/sc.count*100);
+    const fill=pct>=80?sc.color:(pct>=60?'#B7950B':'#C0392B');
+    rows.innerHTML+=`<div class="ms-row">
+      <div class="ms-label" style="color:${sc.dark};font-weight:600;">${sc.id} — ${sc.name}</div>
+      <div class="ms-bar"><div class="ms-fill" style="width:${pct}%;background:${fill};"></div></div>
+      <div class="ms-num" style="color:${fill};">${score_sec[i]}/${sc.count}</div>
+    </div>`;
+  });
+  document.getElementById('score').style.display='block';
+  document.getElementById('score').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function send(){
+  const prenom=document.getElementById('fp').value.trim();
+  const nom=document.getElementById('fn').value.trim();
+  const ss=document.getElementById('ss'),bs=document.getElementById('bs');
+  if(!prenom||!nom){ss.className='sstatus ko';ss.textContent='⚠️ Merci de renseigner ton prénom et nom.';return;}
+  bs.disabled=true;ss.className='sstatus loading';ss.textContent='⏳ Envoi en cours…';
+  const t=QS.length,p=Math.round(score/t*100);
+  const now=new Date().toLocaleString('fr-FR',{timeZone:'Europe/Paris'});
+  const data={prenom,nom,date:now,score:`${score}/${t}`,pourcentage:`${p}%`,statut:p>=80?'RÉUSSI':'ÉCHOUÉ',
+    s1:`${score_sec[0]}/5`,s2:`${score_sec[1]}/5`,s3:`${score_sec[2]}/5`,s4:`${score_sec[3]}/5`,quiz:'booking'};
+  const qs=Object.entries(data).map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+  const img=new Image();
+  img.onload=img.onerror=function(){
+    ss.className='sstatus ok';
+    ss.innerHTML=`✅ <strong>Résultats envoyés !</strong> Merci ${prenom}, ton score de ${p}% a été enregistré.`;
+    bs.textContent='✅ Envoyé';
+  };
+  img.src=URL_GAS+'?'+qs;
+}
+function restart(){document.getElementById('score').style.display='none';build();window.scrollTo({top:0,behavior:'smooth'});}
+build();
+</script>
+</body>
+</html>
